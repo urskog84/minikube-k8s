@@ -9,7 +9,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/urskog84/awx-operator.git
-    targetRevision: master
+    targetRevision: main
     path: awx
   destination:
     server: https://kubernetes.default.svc
