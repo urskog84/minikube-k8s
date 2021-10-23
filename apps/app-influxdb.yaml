@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: awx
+  name: inflxudb
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -10,10 +10,10 @@ spec:
   source:
     repoURL: https://github.com/urskog84/awx-operator.git
     targetRevision: main
-    path: awx
+    path: inflxudb
   destination:
     server: https://kubernetes.default.svc
-    namespace: default
+    namespace: inflxudb
   syncPolicy:
     automated:
       prune: true
