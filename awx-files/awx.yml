@@ -4,5 +4,7 @@ kind: AWX
 metadata:
   name: awx-demo
 spec:
-  service_type: nodeport
+  service_type: NodePort
+  nodeport_port: 30080
+  ingress_type: ingres
   hostname: awx-demo.example.com
