@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: policy
+  name: awx
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://github.com/urskog84/awx-operator.git
     targetRevision: master
-    path: awx-operator
+    path: awx
   destination:
     server: https://kubernetes.default.svc
     namespace: default
