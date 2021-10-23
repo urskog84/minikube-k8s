@@ -6,5 +6,4 @@ metadata:
 spec:
   service_type: NodePort
   nodeport_port: 30080
-  ingress_type: ingres
   hostname: awx-demo.example.com
