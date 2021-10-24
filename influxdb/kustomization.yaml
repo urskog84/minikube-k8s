@@ -7,4 +7,4 @@ resources:
     - influxdb-config.yaml
     - influxdb-secret.yaml
     - influxdb-data.yaml
-    - influxdb-service.yml
+    - influxdb-service.yaml
