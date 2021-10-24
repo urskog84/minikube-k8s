@@ -1,4 +1,4 @@
-# minikube_k8c
+# minikube_k8s
 
 minikube cluster wtith
 
