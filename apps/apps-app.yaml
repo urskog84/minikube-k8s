@@ -9,7 +9,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'https://github.com/urskog84/awx-operator.git'
+    repoURL: 'https://github.com/urskog84/minikube-k8s.git'
     path: apps
     targetRevision: main
   destination:
