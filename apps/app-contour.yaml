@@ -13,7 +13,7 @@ spec:
     path: contour
   destination:
     server: https://kubernetes.default.svc
-    namespace: argo
+    namespace: default
   syncPolicy:
     automated:
       prune: true
