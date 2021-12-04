@@ -8,5 +8,3 @@ spec:
   rabbitmq:
     additionalPlugins:
       - rabbitmq_management
-    additionalConfig: |
-      load_definitions = ./definitions.json
