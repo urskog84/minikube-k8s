@@ -13,7 +13,7 @@ spec:
     path: rabbitmq-operator
   destination:
     server: https://kubernetes.default.svc
-    namespace: rabbitmq-system
+    namespace: default
   syncPolicy:
     automated:
       prune: true
