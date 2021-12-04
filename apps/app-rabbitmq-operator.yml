@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: awx-operator
+  name: rabbitmq-operator
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -13,8 +13,9 @@ spec:
     path: rabbitmq-operator
   destination:
     server: https://kubernetes.default.svc
-    namespace: default
+    namespace: rabbitmq-system
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+
