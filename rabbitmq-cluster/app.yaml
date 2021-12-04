@@ -2,9 +2,11 @@
 apiVersion: rabbitmq.com/v1beta1
 kind: RabbitmqCluster
 metadata:
-    name: rabbitmq-cluster
+  name: rabbitmq-cluster
 spec:
   replicas: 1
   rabbitmq:
     additionalPlugins:
       - rabbitmq_management
+    additionalConfig: |
+      load_definitions = ./definitions.json
