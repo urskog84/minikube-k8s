@@ -5,4 +5,4 @@ metadata:
   name: awx-demo
 spec:
   service_type: nodeport
-  hostname: awx-demo.example.com
+  hostname: awx.humlevagen.local
