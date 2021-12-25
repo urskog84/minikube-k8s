@@ -21,7 +21,7 @@ spec:
       priority: 10
       services:
         - name: awx-demo-service
-          port: 30080
+          port: 80
   tls:
     certResolver: default
     options:
