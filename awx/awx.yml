@@ -3,14 +3,15 @@ apiVersion: awx.ansible.com/v1beta1
 kind: AWX
 metadata:
   name: awx-demo
+  namespace: awx
 spec:
-  service_type: NodePort
+  service_type: ClusterIP
 ---
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
   name: awx-server
-  namespace: default
+  namespace: awx
 spec:
   entryPoints:
     - websecure
