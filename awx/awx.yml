@@ -5,7 +5,7 @@ metadata:
   name: awx-demo
 spec:
   service_type: NodePort
-  loadbalancer_port: 30080
+  nodeport_port: 30080
 ---
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
