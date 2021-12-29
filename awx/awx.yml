@@ -6,6 +6,8 @@ metadata:
   namespace: awx
 spec:
   service_type: ClusterIP
+  ingress_type: none
+
 ---
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
@@ -17,7 +19,7 @@ spec:
     - websecure
   routes:
     - kind: Rule
-      match: Host(`awx.humlevagen.local`)
+      match: Host(`awx.humlevagen`)
       priority: 10
       services:
         - name: awx-demo-service
