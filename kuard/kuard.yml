@@ -45,7 +45,7 @@ spec:
       port:
         number: 80
   rules:
-    - host: kuard.humlevagen.local
+    - host: kuard.humlevagen
       http:
         paths:
           - path: /
