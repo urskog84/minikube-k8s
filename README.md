@@ -14,11 +14,10 @@ minikube start --cpus=8 --memory=12g --addons=ingress
 
 ```
 kubectl create namespace argocd
-kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+kubectl apply -n argocd -f argo-ingress/install.yaml
+kubectl apply -n argocd -f argo-ingress/traf-ing.yml
 
-
-
-
+# Create Argo - apps och apps
 kubectl apply -n argocd -f apps/apps-app.yaml
 ```
 
