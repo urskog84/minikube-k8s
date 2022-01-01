@@ -34,24 +34,46 @@ spec:
       port: 80
       targetPort: 8080
 ---
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: testip
+spec:
+  ipWhiteList:
+    sourceRange:
+      - 192.168.1.0/24
+      - 10.0.0.0/16
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: test-header
+spec:
+  headers:
+    customRequestHeaders:
+      X-Script-Name: "test"
+    customResponseHeaders:
+      X-Custom-Response-Header: "value"
+  #  hostsProxyHeaders:
+  #    - X-Forwarded-For
+  #     - X-Real-Ip
+---
+# ingress.kubernetes.io/whitelist-x-forwarded-for: "true"
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
 metadata:
   name: minimal-ingress
 spec:
-  defaultBackend:
-    service:
-      name: kuard-service
-      port:
-        number: 80
-  rules:
-    - host: kuard.humlevagen
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: kuard-service
-                port:
-                  number: 80
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`kuard.urskog.bot.nu`)
+      kind: Rule
+      services:
+        - name: kuard-service
+          port: 80
+      middlewares:
+        - name: test-header
+        - name: testip
+  tls:
+    secretName: ssl-cert-production
