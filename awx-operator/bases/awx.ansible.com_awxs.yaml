@@ -89,6 +89,9 @@ spec:
                 ingress_path:
                   description: The ingress path used to reach the deployed service
                   type: string
+                ingress_path_type:
+                  description: The ingress path type for the deployed service
+                  type: string
                 ingress_annotations:
                   description: Annotations to add to the Ingress Controller
                   type: string
@@ -124,6 +127,10 @@ spec:
                 route_tls_secret:
                   description: Secret where the TLS related credentials are stored
                   type: string
+                nodeport_port:
+                  description: Port to use for the nodeport
+                  type: integer
+                  default: 30080
                 node_selector:
                   description: nodeSelector for the pods
                   type: string
@@ -288,6 +295,11 @@ spec:
                 redis_image_version:
                   description: Redis container image version to use
                   type: string
+                redis_capabilities:
+                  description: Redis container capabilities
+                  type: array
+                  items:
+                    type: string
                 init_container_image:
                   description: Registry path to the init container to use
                   type: string
@@ -396,6 +408,10 @@ spec:
                         x-kubernetes-preserve-unknown-fields: true
                     type: object
                   type: array
+                security_context_settings:
+                  description: Key/values that will be set under the pod-level securityContext field
+                  type: object
+                  x-kubernetes-preserve-unknown-fields: true
               type: object
             status:
               properties:
@@ -442,318 +458,3 @@ spec:
                   type: array
               type: object
           type: object
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  name: awxbackups.awx.ansible.com
-spec:
-  group: awx.ansible.com
-  names:
-    kind: AWXBackup
-    listKind: AWXBackupList
-    plural: awxbackups
-    singular: awxbackup
-  scope: Namespaced
-  versions:
-    - name: v1beta1
-      served: true
-      storage: true
-      subresources:
-        status: {}
-      schema:
-        openAPIV3Schema:
-          type: object
-          x-kubernetes-preserve-unknown-fields: true
-          description: Schema validation for the AWXBackup CRD
-          properties:
-            spec:
-              type: object
-              required:
-                - deployment_name
-              properties:
-                deployment_name:
-                  description: Name of the deployment to be backed up
-                  type: string
-                backup_pvc:
-                  description: Name of the PVC to be used for storing the backup
-                  type: string
-                backup_pvc_namespace:
-                  description: Namespace the PVC is in
-                  type: string
-                backup_storage_requirements:
-                  description: Storage requirements for the PostgreSQL container
-                  type: string
-                backup_storage_class:
-                  description: Storage class to use when creating PVC for backup
-                  type: string
-                postgres_label_selector:
-                  description: Label selector used to identify postgres pod for backing up data
-                  type: string
-                postgres_image:
-                  description: Registry path to the PostgreSQL container to use
-                  type: string
-                postgres_image_version:
-                  description: PostgreSQL container image version to use
-                  type: string
-            status:
-              type: object
-              properties:
-                conditions:
-                  description: The resulting conditions when a Service Telemetry is
-                    instantiated
-                  items:
-                    properties:
-                      lastTransitionTime:
-                        type: string
-                      reason:
-                        type: string
-                      status:
-                        type: string
-                      type:
-                        type: string
-                    type: object
-                  type: array
-                backupDirectory:
-                  description: Backup directory name on the specified pvc
-                  type: string
-                backupClaim:
-                  description: Backup persistent volume claim
-                  type: string
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  name: awxrestores.awx.ansible.com
-spec:
-  group: awx.ansible.com
-  names:
-    kind: AWXRestore
-    listKind: AWXRestoreList
-    plural: awxrestores
-    singular: awxrestore
-  scope: Namespaced
-  versions:
-    - name: v1beta1
-      served: true
-      storage: true
-      subresources:
-        status: {}
-      schema:
-        openAPIV3Schema:
-          type: object
-          x-kubernetes-preserve-unknown-fields: true
-          description: Schema validation for the AWXRestore CRD
-          properties:
-            spec:
-              type: object
-              properties:
-                backup_source:
-                  description: Backup source
-                  type: string
-                  enum:
-                    - CR
-                    - PVC
-                deployment_name:
-                  description: Name of the deployment to be restored to
-                  type: string
-                backup_name:
-                  description: AWXBackup object name
-                  type: string
-                backup_pvc:
-                  description: Name of the PVC to be restored from, set as a status found on the awxbackup object (backupClaim)
-                  type: string
-                backup_pvc_namespace:
-                  description: Namespace the PVC is in
-                  type: string
-                backup_dir:
-                  description: Backup directory name, set as a status found on the awxbackup object (backupDirectory)
-                  type: string
-                postgres_label_selector:
-                  description: Label selector used to identify postgres pod for backing up data
-                  type: string
-                postgres_image:
-                  description: Registry path to the PostgreSQL container to use
-                  type: string
-                postgres_image_version:
-                  description: PostgreSQL container image version to use
-                  type: string
-            status:
-              type: object
-              properties:
-                conditions:
-                  description: The resulting conditions when a Service Telemetry is
-                    instantiated
-                  items:
-                    properties:
-                      lastTransitionTime:
-                        type: string
-                      reason:
-                        type: string
-                      status:
-                        type: string
-                      type:
-                        type: string
-                    type: object
-                  type: array
-                restoreComplete:
-                  description: Restore process complete
-                  type: boolean
-
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  creationTimestamp: null
-  name: awx-operator
-rules:
-  - apiGroups:
-      - route.openshift.io
-    resources:
-      - routes
-      - routes/custom-host
-    verbs:
-      - '*'
-  - apiGroups:
-      - ""
-      - "rbac.authorization.k8s.io"
-    resources:
-      - pods
-      - services
-      - services/finalizers
-      - serviceaccounts
-      - endpoints
-      - persistentvolumeclaims
-      - events
-      - configmaps
-      - secrets
-      - roles
-      - rolebindings
-    verbs:
-      - '*'
-  - apiGroups:
-      - apps
-      - extensions
-    resources:
-      - deployments
-      - daemonsets
-      - replicasets
-      - statefulsets
-      - ingresses
-    verbs:
-      - '*'
-  - apiGroups:
-      - monitoring.coreos.com
-    resources:
-      - servicemonitors
-    verbs:
-      - get
-      - create
-  - apiGroups:
-      - apps
-    resourceNames:
-      - awx-operator
-    resources:
-      - deployments/finalizers
-    verbs:
-      - update
-  - apiGroups:
-      - apps
-    resources:
-      - deployments/scale
-      - statefulsets/scale
-    verbs:
-      - patch
-  - apiGroups:
-      - ""
-    resources:
-      - pods/exec
-    verbs:
-      - create
-      - get
-  - apiGroups:
-      - apps
-    resources:
-      - replicasets
-    verbs:
-      - get
-  - apiGroups:
-      - awx.ansible.com
-    resources:
-      - '*'
-      - awxbackups
-      - awxrestores
-    verbs:
-      - '*'
-
----
-kind: ClusterRoleBinding
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  name: awx-operator
-subjects:
-  - kind: ServiceAccount
-    name: awx-operator
-    namespace: default
-roleRef:
-  kind: ClusterRole
-  name: awx-operator
-  apiGroup: rbac.authorization.k8s.io
-
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: awx-operator
-  namespace: default
-
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: awx-operator
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      name: awx-operator
-  template:
-    metadata:
-      labels:
-        name: awx-operator
-    spec:
-      serviceAccountName: awx-operator
-      containers:
-        - name: awx-operator
-          image: "quay.io/ansible/awx-operator:0.13.0"
-          imagePullPolicy: "Always"
-          volumeMounts:
-            - mountPath: /tmp/ansible-operator/runner
-              name: runner
-          env:
-            # Watch all namespaces (cluster-scoped).
-            - name: WATCH_NAMESPACE
-              value: ""
-            - name: POD_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-            - name: OPERATOR_NAME
-              value: awx-operator
-            - name: ANSIBLE_GATHERING
-              value: explicit
-            - name: OPERATOR_VERSION
-              value: "0.13.0"
-            - name: ANSIBLE_DEBUG_LOGS
-              value: "false"
-          livenessProbe:
-            httpGet:
-              path: /healthz
-              port: 6789
-            initialDelaySeconds: 15
-            periodSeconds: 20
-      volumes:
-        - name: runner
-          emptyDir: {}
