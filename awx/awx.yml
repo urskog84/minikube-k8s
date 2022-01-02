@@ -1,14 +1,9 @@
 ---
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: awx-web
----
 apiVersion: awx.ansible.com/v1beta1
 kind: AWX
 metadata:
   name: awx-demo
-  namespace: awx-web
+  namespace: awx-operator
 spec:
   service_type: ClusterIP
   ingress_type: route
