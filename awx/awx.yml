@@ -13,5 +13,5 @@ spec:
   service_type: ClusterIP
   ingress_type: route
   route_host: awx.urskog.bot.nu
-  route_tls_termination_mechanism: Passthrough
+  route_tls_termination_mechanism: Edge
   route_tls_secret: ssl-cert-production
