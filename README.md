@@ -38,11 +38,11 @@ kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.pas
 k edit svc -n kube-system traefik
 
 editera
+---
+
 spec:
-  .
-  .
-  externalTrafficPolicy: Cluster --> to
-externalTrafficPolicy: Local
+  ...
+  externalTrafficPolicy: Cluster --> Local
 ```
 
 (
@@ -51,3 +51,5 @@ kubectl proxy &
 kubectl get namespace $NAMESPACE -o json |jq '.spec = {"finalizers":[]}' >temp.json
 curl -k -H "Content-Type: application/json" -X PUT --data-binary @temp.json 127.0.0.1:8001/api/v1/namespaces/$NAMESPACE/finalize
 )
+
+kubectl port-forward -n awx svc/awx-demo-servicer 8080:80
