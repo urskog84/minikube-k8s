@@ -11,23 +11,7 @@ metadata:
   namespace: awx
 spec:
   service_type: ClusterIP
-  ingress_type: none
-
----
-apiVersion: traefik.containo.us/v1alpha1
-kind: IngressRoute
-metadata:
-  name: awx-server
-  namespace: awx
-spec:
-  entryPoints:
-    - websecure
-  routes:
-    - kind: Rule
-      match: Host(`awx.urskog.bot.nu`)
-      priority: 10
-      services:
-        - name: awx-demo-service
-          port: 80
-  tls:
-    secretName: ssl-cert-production
+  ingress_type: route
+  route_host: awx.urskog.bot.nu
+  route_tls_termination_mechanism: Passthrough
+  route_tls_secret: ssl-cert-production
