@@ -5,7 +5,7 @@ metadata:
   name: awx-demo
   namespace: awx-operator
 spec:
-  service_type: ClusterIP
+  service_type: nodeport
   ingress_type: route
   route_host: awx.urskog.bot.nu
   route_tls_termination_mechanism: Edge
